@@ -1,8 +1,15 @@
 
 
+import 'package:doctor_new_project/presentation/screens/DoctorsDetails_screen.dart';
+import 'package:doctor_new_project/presentation/screens/home_screen.dart';
 import 'package:doctor_new_project/presentation/screens/login_screen.dart';
+import 'package:doctor_new_project/presentation/screens/recommendation%20Doctor.dart';
 import 'package:doctor_new_project/presentation/screens/splash_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import 'logic/doctors_cubit/doctors_cubit.dart';
+import 'logic/home_cubit/home_cubit.dart';
 
 
 
@@ -19,13 +26,24 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'doctor_app_rami',
-      //home: SplashScreen() ,
-      //home: HomeScreen() ,
-      home: LoginScreen() ,
-      debugShowCheckedModeBanner: false,
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<HomeCubit>(
+          create: (_) => HomeCubit()..getUserProfile(),
+        ),
+        BlocProvider<DoctorsCubit>(
+          create: (_) => DoctorsCubit()..getDoctors(),
+        ),
+      ],
+      child: MaterialApp(
+        title: 'doctor_app_rami',
+        //home: SplashScreen() ,
+        //home: HomeScreen() ,
+        //home: LoginScreen() ,
+        home: RecommendationDoctor() ,
+        debugShowCheckedModeBanner: false,
 
+      ),
     );
   }
 }
