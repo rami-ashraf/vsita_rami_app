@@ -1,6 +1,6 @@
 
 
-import 'package:doctor_new_project/presentation/screens/DoctorsDetails_screen.dart';
+import 'package:doctor_new_project/presentation/screens/doctorsDetails_screen.dart';
 import 'package:doctor_new_project/presentation/screens/home_screen.dart';
 import 'package:doctor_new_project/presentation/screens/login_screen.dart';
 import 'package:doctor_new_project/presentation/screens/recommendation%20Doctor.dart';

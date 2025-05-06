@@ -23,9 +23,10 @@ class RoundedBackButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 40,
-      height: 40,
+      width: 20,
+      height: 20,
       alignment: Alignment.center,
+      /*
       decoration: BoxDecoration(
         color: backgroundColor,
         borderRadius: BorderRadius.circular(borderRadius),
@@ -34,6 +35,8 @@ class RoundedBackButton extends StatelessWidget {
           width: 1,
         ),
       ),
+
+       */
       child: IconButton(
         icon: Icon(Icons.arrow_back_ios,
             color: iconColor,

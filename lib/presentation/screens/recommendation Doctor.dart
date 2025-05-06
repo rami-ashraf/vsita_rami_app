@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../core/navigation_bar.dart';
 import '../../core/rounded_back_button.dart';
 import '../../logic/doctors_cubit/doctors_cubit.dart';
 import '../../logic/doctors_cubit/doctors_states.dart';
 import '../../data/doctorData.dart';
-import 'DoctorsDetails_screen.dart';
+import 'doctorsDetails_screen.dart';
 import 'home_screen.dart';
-
 
 class RecommendationDoctor extends StatelessWidget {
   const RecommendationDoctor({super.key});
@@ -17,37 +17,30 @@ class RecommendationDoctor extends StatelessWidget {
     return BlocProvider(
       create: (context) => DoctorsCubit()..getDoctors(),
       child: Scaffold(
+        appBar: AppBar(
+          leading: RoundedBackButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+          title: const Text(
+            "Recommendation Doctor",
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
+              color: Color.fromRGBO(36, 36, 36, 1),
+            ),
+          ),
+          actions: [
+            CustomPopupMenu(context: context), // Your popup menu
+          ],
+        ),
         body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 14.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 50),
-              Row(
-                children: [
-                  RoundedBackButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const HomeScreen(),
-                        ),
-                      );
-                    },
-                  ),
-                  const Spacer(),
-                  const Text(
-                    "Recommendation Doctor",
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w700,
-                      color: Color.fromRGBO(36, 36, 36, 1),
-                    ),
-                  ),
-                  const Spacer(),
-                ],
-              ),
-              const SizedBox(height: 30),
+              const SizedBox(height: 20), // Reduced space since we have appbar
               Expanded(
                 child: BlocBuilder<DoctorsCubit, DoctorsStates>(
                   builder: (context, state) {
@@ -68,7 +61,7 @@ class RecommendationDoctor extends StatelessWidget {
                             ),
                             child: ListTile(
                               contentPadding: const EdgeInsets.all(12),
-                              leading:                   ClipRRect(
+                              leading: ClipRRect(
                                 borderRadius: BorderRadius.circular(12),
                                 child: Image.network(
                                   doctor.photo,
@@ -91,6 +84,7 @@ class RecommendationDoctor extends StatelessWidget {
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
+
                               subtitle: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -107,7 +101,6 @@ class RecommendationDoctor extends StatelessWidget {
                                 ],
                               ),
                               onTap: () {
-
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(

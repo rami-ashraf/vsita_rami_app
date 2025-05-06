@@ -6,7 +6,7 @@ import '../../logic/doctors_cubit/doctors_cubit.dart';
 import '../../logic/doctors_cubit/doctors_states.dart';
 import '../../logic/home_cubit/home_cubit.dart';
 import '../../logic/home_cubit/home_state.dart';
-import 'DoctorsDetails_screen.dart';
+import 'doctorsDetails_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
