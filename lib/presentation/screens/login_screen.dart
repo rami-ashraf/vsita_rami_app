@@ -216,15 +216,18 @@ class _LoginScreenState extends State<LoginScreen> {
                     // Sign  Button
                     InkWell(
                       onTap: () {
-                        if(formKey.currentState!.validate()){
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Fields is required ")));
-                        }
-
-                        context.read<LoginCubit>().Login(
+                        if (formKey.currentState!.validate()) {
+                          // Only proceed with login if validation passes
+                          context.read<LoginCubit>().Login(
                             email: emailcontroller.text,
-                            pass: passwordcontroller.text);
-
-
+                            pass: passwordcontroller.text,
+                          );
+                        } else {
+                          // Show error message if validation fails
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text("Fields are required")),
+                          );
+                        }
                       },
                       child: Container(
                           width: double.infinity,

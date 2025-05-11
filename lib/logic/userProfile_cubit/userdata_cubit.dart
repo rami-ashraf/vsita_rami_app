@@ -4,16 +4,16 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../core/api_links.dart';
 import '../../data/userData.dart';
-import 'home_state.dart';
+import 'userData_states.dart';
 
-class HomeCubit extends Cubit<HomeStates> {
-  HomeCubit() : super(HomeInitialStates());
+class UserProfileCubit extends Cubit<UserProfileStates> {
+  UserProfileCubit() : super(UserProfileInitialStates());
 
   Dio request = Dio();
   UserData? userData;
 
   Future<void> getUserProfile() async {
-    emit(HomeLoadingState());
+    emit(UserProfileLoadingState());
 
     try {
       final prefs = await SharedPreferences.getInstance();
@@ -34,7 +34,6 @@ class HomeCubit extends Cubit<HomeStates> {
       if (response.statusCode == 200) {
         // Handle both list and map responses
         if (response.data['data'] is List) {
-          // If it's a list, take the first item (or handle as needed)
           if ((response.data['data'] as List).isNotEmpty) {
             userData = UserData.fromJson((response.data['data'] as List).first);
           } else {
@@ -46,17 +45,23 @@ class HomeCubit extends Cubit<HomeStates> {
           throw Exception('Invalid user data format');
         }
 
-        emit(HomeSucessState());
+        emit(UserProfileSucessState());
       } else if (response.statusCode == 401) {
-        emit(HomeErrorState("Session expired. Please login again."));
+        emit(UserProfileErrorState("Session expired. Please login again."));
       } else {
-        emit(HomeErrorState("Error: ${response.data['message'] ?? 'Unknown error'}"));
+        emit(UserProfileErrorState("Error: ${response.data['message'] ?? 'Unknown error'}"));
       }
     } on DioException catch (e) {
-      emit(HomeErrorState("Network error: ${e.message}"));
+      emit(UserProfileErrorState("Network error: ${e.message}"));
     } catch (e) {
-      emit(HomeErrorState("Unexpected error: ${e.toString()}"));
+      emit(UserProfileErrorState("Unexpected error: ${e.toString()}"));
     }
+  }
+
+  // Add this reset method
+  void reset() {
+    userData = null; // Clear cached user data
+    emit(UserProfileInitialStates()); // Reset to initial state
   }
 
   UserData? get cachedUserData => userData;

@@ -32,7 +32,7 @@ class RecommendationDoctor extends StatelessWidget {
             ),
           ),
           actions: [
-            CustomPopupMenu(context: context), // Your popup menu
+            CustomPopupMenu(), // Your popup menu
           ],
         ),
         body: Padding(

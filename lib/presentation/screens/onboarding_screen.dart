@@ -9,9 +9,9 @@ class OnBoardingScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Scaffold(
-        body: Center(
+    return Scaffold(
+      body: SingleChildScrollView(
+        child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -102,7 +102,7 @@ class OnBoardingScreen extends StatelessWidget {
                         color: Color.fromRGBO(36, 124, 255, 1),
                         borderRadius: BorderRadius.circular(10),
                       ),
-
+            
                       child: Center(
                           child: Text("Get Started",
                             style: TextStyle(
@@ -110,13 +110,13 @@ class OnBoardingScreen extends StatelessWidget {
                               fontWeight: FontWeight.w700,
                               color: Colors.white,
                             ),
-
+            
                           ))),
                 ),
               ),
-
+            
               // Login Button
-
+            
             ],
           ),
         ),

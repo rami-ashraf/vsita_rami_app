@@ -2,33 +2,46 @@ import 'package:doctor_new_project/presentation/screens/recommendation%20Doctor.
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../core/navigation_bar.dart';
 import '../../logic/doctors_cubit/doctors_cubit.dart';
 import '../../logic/doctors_cubit/doctors_states.dart';
-import '../../logic/home_cubit/home_cubit.dart';
-import '../../logic/home_cubit/home_state.dart';
+import '../../logic/userProfile_cubit/userData_states.dart';
+import '../../logic/userProfile_cubit/userdata_cubit.dart';
 import 'doctorsDetails_screen.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  @override
+  void initState() {
+    super.initState();
+    context.read<UserProfileCubit>().getUserProfile(); // تحميل بيانات المستخدم
+    context.read<DoctorsCubit>().getDoctors(); // تحميل بيانات الدكاترة
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return BlocBuilder<HomeCubit, HomeStates>(
+    return BlocBuilder<UserProfileCubit, UserProfileStates>(
       builder: (context, state) {
-        if (state is HomeLoadingState) {
+        if (state is UserProfileLoadingState) {
           return const Scaffold(
             body: Center(child: CircularProgressIndicator()),
           );
         }
 
-        if (state is HomeErrorState) {
+        if (state is UserProfileErrorState) {
           return Scaffold(
             body: Center(child: Text(state.error)),
           );
         }
 
-        if (state is HomeSucessState) {
-          final userData = context.read<HomeCubit>().cachedUserData;
+        if (state is UserProfileSucessState) {
+          final userData = context.read<UserProfileCubit>().cachedUserData;
 
           return Scaffold(
             body: SingleChildScrollView(
@@ -61,6 +74,8 @@ class HomeScreen extends StatelessWidget {
                       ),
                       const Spacer(),
                       const Icon(Icons.notifications),
+                      const SizedBox(height: 15),
+                      const CustomPopupMenu(),
                     ],
                   ),
                   const SizedBox(height: 15),
@@ -133,7 +148,6 @@ class HomeScreen extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 15),
-
                   SizedBox(
                     height: 500,
                     child: BlocBuilder<DoctorsCubit, DoctorsStates>(
@@ -155,7 +169,7 @@ class HomeScreen extends StatelessWidget {
                                 ),
                                 child: ListTile(
                                   contentPadding: const EdgeInsets.all(12),
-                                  leading:                   ClipRRect(
+                                  leading: ClipRRect(
                                     borderRadius: BorderRadius.circular(12),
                                     child: Image.network(
                                       doctor.photo,
@@ -200,11 +214,8 @@ class HomeScreen extends StatelessWidget {
                                         builder: (context) => DoctorsDetails(doctor: doctor),
                                       ),
                                     );
-                                    // Navigate to doctor details page (optional)
                                   },
                                 ),
-
-
                               );
                             },
                           );
@@ -220,8 +231,9 @@ class HomeScreen extends StatelessWidget {
           );
         }
 
+        //  initial
         return const Scaffold(
-          body: Center(child: Text("Unknown state")),
+          body: Center(child: CircularProgressIndicator()),
         );
       },
     );

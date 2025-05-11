@@ -6,8 +6,6 @@ import '../../core/api_links.dart';
 import '../../data/doctorData.dart';
 import 'doctors_states.dart';
 
-
-
 class DoctorsCubit extends Cubit<DoctorsStates> {
   DoctorsCubit() : super(DoctorsInitialStates());
 
@@ -47,5 +45,11 @@ class DoctorsCubit extends Cubit<DoctorsStates> {
     } catch (e) {
       emit(DoctorsErrorStates("Unexpected error: ${e.toString()}"));
     }
+  }
+
+  // Add this reset method
+  void reset() {
+    doctorsList = []; // Clear the doctors list
+    emit(DoctorsInitialStates()); // Reset to initial state
   }
 }

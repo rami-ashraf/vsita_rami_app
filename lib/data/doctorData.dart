@@ -1,4 +1,5 @@
 class DoctorsData {
+
   final int id;
   final String name;
   final String email;
@@ -10,11 +11,13 @@ class DoctorsData {
   final String degree;
   final Specialization specialization;
   final City city;
-  final int appointPrice;
+  final double appointPrice;
+
   final String startTime;
   final String endTime;
 
   DoctorsData({
+
     required this.id,
     required this.name,
     required this.email,
@@ -44,7 +47,7 @@ class DoctorsData {
       degree: json['degree'],
       specialization: Specialization.fromJson(json['specialization']),
       city: City.fromJson(json['city']),
-      appointPrice: json['appoint_price'],
+      appointPrice: (json['appoint_price'] as num).toDouble(),
       startTime: json['start_time'],
       endTime: json['end_time'],
     );

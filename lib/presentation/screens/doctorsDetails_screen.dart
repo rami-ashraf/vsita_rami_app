@@ -1,3 +1,4 @@
+import 'package:doctor_new_project/presentation/screens/bookAppointment_screen.dart';
 import 'package:flutter/material.dart';
 import '../../core/navigation_bar.dart';
 import '../../core/rounded_back_button.dart';
@@ -31,26 +32,12 @@ class DoctorsDetails extends StatelessWidget {
           ),
           centerTitle: true,
           actions: [
-            CustomPopupMenu(context: context),
+            CustomPopupMenu(),
           ],
-          bottom: const PreferredSize(
-            preferredSize: Size.fromHeight(48),
-            child: TabBar(
-              labelColor: Colors.blue,
-              unselectedLabelColor: Colors.grey,
-              labelStyle: TextStyle(fontWeight: FontWeight.w600),
-              indicatorColor: Colors.blue,
-              tabs: [
-                Tab(text: "About"),
-                Tab(text: "Location"),
-                Tab(text: "Reviews"),
-              ],
-            ),
-          ),
         ),
         body: Column(
           children: [
-            // Doctor info section
+            // Doctor Info Section
             Padding(
               padding: const EdgeInsets.all(14.0),
               child: Row(
@@ -86,8 +73,10 @@ class DoctorsDetails extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 6),
-                        Text('${doctor.degree} - ${doctor.specialization.name}'),
-                        Text('${doctor.city.name}, ${doctor.city.governrate.name}'),
+                        Text(
+                            '${doctor.degree} - ${doctor.specialization.name}'),
+                        Text('${doctor.city.name}, ${doctor.city.governrate
+                            .name}'),
                       ],
                     ),
                   ),
@@ -95,7 +84,19 @@ class DoctorsDetails extends StatelessWidget {
               ),
             ),
 
-            // Tab content
+            const TabBar(
+              labelColor: Colors.blue,
+              unselectedLabelColor: Colors.grey,
+              labelStyle: TextStyle(fontWeight: FontWeight.w600),
+              indicatorColor: Colors.blue,
+              tabs: [
+                Tab(text: "About"),
+                Tab(text: "Location"),
+                Tab(text: "Reviews"),
+              ],
+            ),
+
+            // TabBarView content (Expanded to fill remaining space)
             Expanded(
               child: TabBarView(
                 children: [
@@ -105,33 +106,55 @@ class DoctorsDetails extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text("About me", style: TextStyle(fontWeight: FontWeight.bold)),
+                        const Text(
+                            "About me", style: TextStyle(fontWeight: FontWeight
+                            .bold)),
                         const SizedBox(height: 8),
                         Text(doctor.description ?? 'No description available.'),
+
                         const SizedBox(height: 16),
-                        const Text("Gender", style: TextStyle(fontWeight: FontWeight.bold)),
+
+                        const Text(
+                            "Gender", style: TextStyle(fontWeight: FontWeight
+                            .bold)),
                         const SizedBox(height: 4),
+
                         Text(doctor.gender ?? 'No Gender available.'),
                         const SizedBox(height: 16),
-                        const Text("Phone number", style: TextStyle(fontWeight: FontWeight.bold)),
+
+                        const Text("Phone number",
+                            style: TextStyle(fontWeight: FontWeight.bold)),
                         const SizedBox(height: 4),
+
                         Text(doctor.phone ?? 'No phone number available.'),
                         const SizedBox(height: 16),
-                        const Text("Email address", style: TextStyle(fontWeight: FontWeight.bold)),
+
+                        const Text("Email address",
+                            style: TextStyle(fontWeight: FontWeight.bold)),
                         const SizedBox(height: 4),
+
                         Text(doctor.email ?? 'No email address available.'),
                         const SizedBox(height: 16),
-                        const Text("Starting time", style: TextStyle(fontWeight: FontWeight.bold)),
+
+                        const Text("Starting time",
+                            style: TextStyle(fontWeight: FontWeight.bold)),
                         const SizedBox(height: 4),
+
                         Text(doctor.startTime ?? 'No starting time available.'),
                         const SizedBox(height: 16),
-                        const Text("Ending time", style: TextStyle(fontWeight: FontWeight.bold)),
+                        
+                        const Text("Ending time",
+                            style: TextStyle(fontWeight: FontWeight.bold)),
                         const SizedBox(height: 4),
+
                         Text(doctor.endTime ?? 'No Ending time available.'),
                         const SizedBox(height: 16),
-                        const Text("Appointment price", style: TextStyle(fontWeight: FontWeight.bold)),
+
+                        const Text("Appointment price",
+                            style: TextStyle(fontWeight: FontWeight.bold)),
                         const SizedBox(height: 4),
-                        Text('${doctor.appointPrice.toString()} EGP' ?? 'No appointment price available.'),
+
+                        Text('${doctor.appointPrice} EGP'),
                       ],
                     ),
                   ),
@@ -140,7 +163,8 @@ class DoctorsDetails extends StatelessWidget {
                   Center(
                     child: Padding(
                       padding: const EdgeInsets.all(14.0),
-                      child: Text("Address: ${doctor.city.name}, ${doctor.city.governrate.name}"),
+                      child: Text("Address: ${doctor.city.name}, ${doctor.city
+                          .governrate.name}"),
                     ),
                   ),
 
@@ -151,7 +175,8 @@ class DoctorsDetails extends StatelessWidget {
                       children: const [
                         Icon(Icons.star, color: Colors.amber, size: 50),
                         SizedBox(height: 10),
-                        Text("4.8 (4,279 reviews)", style: TextStyle(fontSize: 16)),
+                        Text("4.8 (4,279 reviews)",
+                            style: TextStyle(fontSize: 16)),
                         SizedBox(height: 10),
                         Text("More reviews coming soon..."),
                       ],
@@ -163,12 +188,15 @@ class DoctorsDetails extends StatelessWidget {
           ],
         ),
 
-        // Fixed bottom button
+        // Bottom Button
         bottomNavigationBar: Padding(
           padding: const EdgeInsets.all(14.0),
           child: ElevatedButton(
             onPressed: () {
-              // Handle appointment logic
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => BookAppointmentScreen(doctor: doctor)),
+              );
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.blue,
