@@ -3,14 +3,39 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../core/navigation_bar.dart';
 import '../../core/rounded_back_button.dart';
+import '../../data/doctorData.dart';
 import '../../logic/doctors_cubit/doctors_cubit.dart';
 import '../../logic/doctors_cubit/doctors_states.dart';
-import '../../data/doctorData.dart';
+import '../widgets/doctor_filtter_modal.dart';
+import '../widgets/doctor_search_bar.dart';
 import 'doctorsDetails_screen.dart';
-import 'home_screen.dart';
 
-class RecommendationDoctor extends StatelessWidget {
+class RecommendationDoctor extends StatefulWidget {
   const RecommendationDoctor({super.key});
+
+  @override
+  State<RecommendationDoctor> createState() => _RecommendationDoctorState();
+}
+
+class _RecommendationDoctorState extends State<RecommendationDoctor> {
+  final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = '';
+  Map<String, dynamic> _filters = {};
+
+  void _showFilterModal(List<DoctorsData> doctors) {
+    showDialog(
+      context: context,
+      builder: (_) => DoctorFilterModal(
+        allDoctors: doctors,
+        onApply: (filters) {
+          setState(() {
+            _filters = filters;
+          });
+        },
+      ),
+    );
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -18,11 +43,7 @@ class RecommendationDoctor extends StatelessWidget {
       create: (context) => DoctorsCubit()..getDoctors(),
       child: Scaffold(
         appBar: AppBar(
-          leading: RoundedBackButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
+          leading: RoundedBackButton(onPressed: () => Navigator.pop(context)),
           title: const Text(
             "Recommendation Doctor",
             style: TextStyle(
@@ -31,16 +52,30 @@ class RecommendationDoctor extends StatelessWidget {
               color: Color.fromRGBO(36, 36, 36, 1),
             ),
           ),
-          actions: [
-            CustomPopupMenu(), // Your popup menu
-          ],
+          actions: [CustomPopupMenu()],
         ),
         body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 14.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 20), // Reduced space since we have appbar
+              const SizedBox(height: 20),
+              DoctorSearchBar(
+                controller: _searchController,
+                onChanged: (value) {
+                  setState(() {
+                    _searchQuery = value.toLowerCase();
+                  });
+                },
+                onFilterTap: () {
+                  if (context.read<DoctorsCubit>().state is DoctorsSuccessStates) {
+                    final doctors = (context.read<DoctorsCubit>().state as DoctorsSuccessStates).doctors;
+                    _showFilterModal(doctors);
+                  }
+                },
+
+              ),
+              const SizedBox(height: 12),
               Expanded(
                 child: BlocBuilder<DoctorsCubit, DoctorsStates>(
                   builder: (context, state) {
@@ -49,7 +84,61 @@ class RecommendationDoctor extends StatelessWidget {
                     } else if (state is DoctorsErrorStates) {
                       return Center(child: Text(state.message));
                     } else if (state is DoctorsSuccessStates) {
-                      final doctors = state.doctors;
+                      final doctors = state.doctors.where((doctor) {
+                        final query = _searchQuery;
+
+                        bool matchesSearch = doctor.name.toLowerCase().contains(query) ||
+                            doctor.degree.toLowerCase().contains(query) ||
+                            doctor.specialization.name.toLowerCase().contains(query) ||
+                            doctor.city.name.toLowerCase().contains(query) ||
+                            doctor.city.governrate.name.toLowerCase().contains(query);
+
+                        bool matchesFilter = true;
+
+                        if (_filters['gender'] != null && doctor.gender != _filters['gender']) matchesFilter = false;
+
+                        if (_filters['description'] != null &&
+                            !doctor.description.toLowerCase().contains(
+                              _filters['description'].toString().toLowerCase(),
+                            )) matchesFilter = false;
+
+                        if (_filters['degree'] != null &&
+                            !doctor.degree.toLowerCase().contains(
+                              _filters['degree'].toString().toLowerCase(),
+                            )) matchesFilter = false;
+
+                        if (_filters['specialization'] != null &&
+                            !doctor.specialization.name.toLowerCase().contains(
+                              _filters['specialization'].toString().toLowerCase(),
+                            )) matchesFilter = false;
+
+                        if (_filters['city'] != null &&
+                            !doctor.city.name.toLowerCase().contains(
+                              _filters['city'].toString().toLowerCase(),
+                            )) matchesFilter = false;
+
+                        if (_filters['appointPrice'] != null &&
+                            doctor.appointPrice > _filters['appointPrice']) matchesFilter = false;
+
+                        if (_filters['startTime'] != null) {
+                          final doctorStart = TimeOfDay(
+                            hour: int.tryParse(doctor.startTime.split(":")[0]) ?? 0,
+                            minute: int.tryParse(doctor.startTime.split(":")[1]) ?? 0,
+                          );
+                          if (doctorStart.hour < _filters['startTime'].hour) matchesFilter = false;
+                        }
+
+                        if (_filters['endTime'] != null) {
+                          final doctorEnd = TimeOfDay(
+                            hour: int.tryParse(doctor.endTime.split(":")[0]) ?? 0,
+                            minute: int.tryParse(doctor.endTime.split(":")[1]) ?? 0,
+                          );
+                          if (doctorEnd.hour > _filters['endTime'].hour) matchesFilter = false;
+                        }
+
+                        return matchesSearch && matchesFilter;
+                      }).toList();
+
                       return ListView.builder(
                         itemCount: doctors.length,
                         itemBuilder: (context, index) {
@@ -80,11 +169,8 @@ class RecommendationDoctor extends StatelessWidget {
                               ),
                               title: Text(
                                 doctor.name,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                ),
+                                style: const TextStyle(fontWeight: FontWeight.bold),
                               ),
-
                               subtitle: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [

@@ -7,7 +7,7 @@ import '../../data/doctorData.dart';
 import '../../logic/appointment_cubit/appointment_cubit.dart';
 import '../../logic/appointment_cubit/appointment_states.dart';
 import 'home_screen.dart';
-
+import 'myAppointment_scree.dart';
 
 class BookAppointmentScreen extends StatefulWidget {
   final DoctorsData doctor;
@@ -39,16 +39,19 @@ class _BookAppointmentScreenState extends State<BookAppointmentScreen> {
 
   List<String> generateTimeSlots(String start, String end) {
     try {
+      final startParts = start.split(" ");
+      final endParts = end.split(" ");
+
       final format = DateFormat('HH:mm:ss');
-      final DateTime startTime = format.parse(start.split(" ")[0]);
-      final DateTime endTime = format.parse(end.split(" ")[0]);
+      final DateTime startTime = format.parse(startParts[0]);
+      final DateTime endTime = format.parse(endParts[0]);
 
       List<String> slots = [];
       DateTime current = startTime;
 
       while (current.isBefore(endTime)) {
         final timePart = format.format(current);
-        final period = start.split(" ")[1];
+        final period = startParts.length > 1 ? startParts[1] : "AM";
         slots.add("$timePart $period");
         current = current.add(const Duration(minutes: 30));
       }
@@ -56,38 +59,62 @@ class _BookAppointmentScreenState extends State<BookAppointmentScreen> {
       return slots;
     } catch (e) {
       debugPrint('Time parsing error: $e');
-      return [];
+      return ["14:00:00 PM", "14:30:00 PM", "15:00:00 PM"];
     }
   }
 
   String _formatAppointmentTime(DateTime date, String timeSlot) {
     try {
       final timePart = timeSlot.split(" ")[0];
+      final period = timeSlot.split(" ")[1];
+
       final timeFormat = DateFormat('HH:mm:ss');
       final time = timeFormat.parse(timePart);
+
+      // Convert to 12-hour format with proper AM/PM handling
+      int hour = time.hour;
+      String periodCorrected = period;
+
+      if (hour >= 12) {
+        periodCorrected = "PM";
+        if (hour > 12) hour -= 12;
+      } else {
+        periodCorrected = "AM";
+        if (hour == 0) hour = 12;
+      }
 
       final appointmentDateTime = DateTime(
         date.year,
         date.month,
         date.day,
-        time.hour,
+        time.hour,  // Keep original hour for calculation
         time.minute,
       );
 
+      // Format exactly as API expects: "Friday, November 24, 2023 12:00 AM"
       return DateFormat('EEEE, MMMM d, y h:mm a').format(appointmentDateTime);
     } catch (e) {
       debugPrint('Error formatting appointment time: $e');
-      return '';
+      return DateFormat('EEEE, MMMM d, y h:mm a').format(DateTime.now());
     }
   }
 
   String _getNextTimeSlot(String currentSlot) {
     try {
+      final parts = currentSlot.split(" ");
+      final timePart = parts[0];
+      final period = parts.length > 1 ? parts[1] : "AM";
+
       final format = DateFormat('HH:mm:ss');
-      final timePart = currentSlot.split(" ")[0];
       final time = format.parse(timePart);
       final nextTime = time.add(const Duration(minutes: 30));
-      return "${format.format(nextTime)} ${currentSlot.split(" ")[1]}";
+
+      String nextPeriod = period;
+      if (time.hour == 11 && time.minute == 30) {
+        nextPeriod = period == "AM" ? "PM" : "AM";
+      }
+
+      return "${format.format(nextTime)} $nextPeriod";
     } catch (e) {
       debugPrint('Error calculating next time slot: $e');
       return currentSlot;
@@ -123,7 +150,7 @@ class _BookAppointmentScreenState extends State<BookAppointmentScreen> {
       doctorId: widget.doctor.id,
       appointmentTime: appointmentTime,
       appointmentEndTime: appointmentEndTime,
-      appointmentPrice: (widget.doctor.appointPrice)?.toDouble() ?? 0.0,
+      appointmentPrice: widget.doctor.appointPrice,
       notes: notesController.text.isNotEmpty ? notesController.text : null,
     );
   }
@@ -142,12 +169,11 @@ class _BookAppointmentScreenState extends State<BookAppointmentScreen> {
         if (state is BookAppointmentSucessState) {
           Navigator.pushAndRemoveUntil(
             context,
-            MaterialPageRoute(builder: (_) => const HomeScreen()),
+            MaterialPageRoute(builder: (_) => const MyAppointmentsScreen()),
                 (route) => false,
           );
         }
       },
-
       child: Scaffold(
         appBar: AppBar(
           leading: RoundedBackButton(

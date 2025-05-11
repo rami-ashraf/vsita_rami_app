@@ -7,6 +7,7 @@ import '../../logic/doctors_cubit/doctors_cubit.dart';
 import '../../logic/doctors_cubit/doctors_states.dart';
 import '../../logic/userProfile_cubit/userData_states.dart';
 import '../../logic/userProfile_cubit/userdata_cubit.dart';
+import '../widgets/custom_bottom_nav_bar.dart';
 import 'doctorsDetails_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -20,8 +21,8 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<UserProfileCubit>().getUserProfile(); // تحميل بيانات المستخدم
-    context.read<DoctorsCubit>().getDoctors(); // تحميل بيانات الدكاترة
+    context.read<UserProfileCubit>().getUserProfile(); //
+    context.read<DoctorsCubit>().getDoctors(); //
   }
 
   @override
@@ -48,7 +49,7 @@ class _HomeScreenState extends State<HomeScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
               child: Column(
                 children: [
-                  const SizedBox(height: 60),
+                  const SizedBox(height: 50),
                   Row(
                     children: [
                       Column(
@@ -228,6 +229,16 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               ),
             ),
+            bottomNavigationBar: CustomBottomNavBar(currentIndex: 0),
+            floatingActionButton: FloatingActionButton(
+              backgroundColor: Colors.blue,
+              elevation: 4,
+              child: const Icon(Icons.search, color: Colors.white),
+              onPressed: () {
+                Navigator.pushNamed(context, '/search');
+              },
+            ),
+            floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
           );
         }
 

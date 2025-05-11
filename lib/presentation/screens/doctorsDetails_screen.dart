@@ -215,7 +215,9 @@ class DoctorsDetails extends StatelessWidget {
             ),
           ),
         ),
+
       ),
+
     );
   }
 }

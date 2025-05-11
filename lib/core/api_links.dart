@@ -7,6 +7,7 @@ class ApiLinks{
   static String logoutUrl= baseUrl + "/auth/logout";
   static String userUpdateUrl= baseUrl + "/user/update";
   static String bookAppointmentUrl= baseUrl + "/appointment/store";
+  static String getMyAppointmentsUrl= baseUrl + "/appointment/index";
 
 
 }

@@ -1,16 +1,17 @@
-import 'package:doctor_new_project/presentation/screens/userProfile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../logic/logout_cubit/logout_cubit.dart';
 import '../logic/logout_cubit/logout_states.dart';
-
 import '../logic/doctors_cubit/doctors_cubit.dart';
 import '../logic/userProfile_cubit/userdata_cubit.dart';
+
 import '../presentation/screens/home_screen.dart';
 import '../presentation/screens/login_screen.dart';
+import '../presentation/screens/myAppointment_scree.dart';
 import '../presentation/screens/recommendation Doctor.dart';
-
+import '../presentation/screens/search_screen.dart';
+import '../presentation/screens/userProfile_screen.dart';
 
 class CustomPopupMenu extends StatelessWidget {
   const CustomPopupMenu({super.key});
@@ -20,17 +21,12 @@ class CustomPopupMenu extends StatelessWidget {
     return BlocListener<LogoutCubit, logoutStates>(
       listener: (context, state) {
         if (state is logoutSuccessState) {
-          // Reset application state
           _resetApplicationState(context);
-
-          // Navigate to login screen and clear all routes
           Navigator.pushAndRemoveUntil(
             context,
-            MaterialPageRoute(builder: (context) =>  LoginScreen()),
+            MaterialPageRoute(builder: (context) => LoginScreen()),
                 (route) => false,
           );
-
-          // Show success message
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('Logged out successfully'),
@@ -39,7 +35,6 @@ class CustomPopupMenu extends StatelessWidget {
             ),
           );
         } else if (state is logoutErrorState) {
-          // Show error message
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(state.error),
@@ -58,34 +53,18 @@ class CustomPopupMenu extends StatelessWidget {
         elevation: 4,
         onSelected: (value) => _handleMenuSelection(context, value),
         itemBuilder: (BuildContext context) => [
-          _buildMenuItem(
-            icon: Icons.home,
-            label: 'Home',
-            value: 'Home',
-          ),
-          _buildMenuItem(
-            icon: Icons.person,
-            label: 'Profile',
-            value: 'Profile',
-          ),
-          _buildMenuItem(
-            icon: Icons.medical_services,
-            label: 'Recommend Doctor',
-            value: 'Recommendation Doctor',
-          ),
+          _buildMenuItem(icon: Icons.home, label: 'Home', value: 'Home'),
+          _buildMenuItem(icon: Icons.search, label: 'Search', value: 'Search'),
+          _buildMenuItem(icon: Icons.person, label: 'Profile', value: 'Profile'),
+          _buildMenuItem(icon: Icons.calendar_today, label: 'My Appointments', value: 'MyAppointments'),
+          _buildMenuItem(icon: Icons.medical_services, label: 'Recommend Doctor', value: 'Recommendation Doctor'),
           const PopupMenuDivider(height: 1),
-          _buildMenuItem(
-            icon: Icons.logout,
-            label: 'Logout',
-            value: 'Logout',
-            isDestructive: true,
-          ),
+          _buildMenuItem(icon: Icons.logout, label: 'Logout', value: 'Logout', isDestructive: true),
         ],
       ),
     );
   }
 
-  // Helper method to build menu items with consistent styling
   PopupMenuItem<String> _buildMenuItem({
     required IconData icon,
     required String label,
@@ -100,28 +79,37 @@ class CustomPopupMenu extends StatelessWidget {
           const SizedBox(width: 12),
           Text(
             label,
-            style: TextStyle(
-              color: isDestructive ? Colors.red : Colors.black87,
-            ),
+            style: TextStyle(color: isDestructive ? Colors.red : Colors.black87),
           ),
         ],
       ),
     );
   }
 
-  // Handle menu item selection
   void _handleMenuSelection(BuildContext context, String value) {
     switch (value) {
       case 'Home':
-        Navigator.pushReplacement(
+        Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const HomeScreen()),
+        );
+        break;
+      case 'Search':
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const RecommendationDoctor()),
         );
         break;
       case 'Profile':
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const UserProfileScreen()),
+        );
+        break;
+      case 'MyAppointments':
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const MyAppointmentsScreen()),
         );
         break;
       case 'Recommendation Doctor':
@@ -136,12 +124,11 @@ class CustomPopupMenu extends StatelessWidget {
     }
   }
 
-  // Reset all cubits/blocs
   void _resetApplicationState(BuildContext context) {
     try {
       context.read<UserProfileCubit>().reset();
     } catch (e) {
-      debugPrint('Error resetting HomeCubit: $e');
+      debugPrint('Error resetting UserProfileCubit: $e');
     }
 
     try {
@@ -151,7 +138,6 @@ class CustomPopupMenu extends StatelessWidget {
     }
   }
 
-  // Show logout confirmation dialog
   void _showLogoutConfirmation(BuildContext context) {
     showDialog(
       context: context,

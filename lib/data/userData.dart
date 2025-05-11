@@ -1,12 +1,14 @@
 import 'dart:convert';
 
 class UserData {
+  int? id; // optional field
   String name;
   String email;
   String phone;
   String gender;
 
   UserData({
+    this.id, // not required
     required this.name,
     required this.email,
     required this.phone,
@@ -16,6 +18,7 @@ class UserData {
   // fromJson method to convert JSON into UserData object
   factory UserData.fromJson(Map<String, dynamic> json) {
     return UserData(
+      id: json['id'], // may be null
       name: json['name'],
       email: json['email'],
       phone: json['phone'],
@@ -26,6 +29,7 @@ class UserData {
   // toJson method to convert UserData object into JSON
   Map<String, dynamic> toJson() {
     return {
+      if (id != null) 'id': id, // include id only if it's not null
       'name': name,
       'email': email,
       'phone': phone,
@@ -33,34 +37,3 @@ class UserData {
     };
   }
 }
-
-/*
-Example usage:
-
-void main() {
-  String jsonString = '''
-  {
-    "message": "Successful query",
-    "data": [
-        {
-            "id": 280,
-            "name": "diaa",
-            "email": "aa@aa.com",
-            "phone": "2222222",
-            "gender": "male"
-        }
-    ],
-    "status": true,
-    "code": 200
-  }
-  ''';
-
-  var jsonData = jsonDecode(jsonString);
-  var userJson = jsonData['data'][0];
-  UserData user = UserData.fromJson(userJson);
-  String username = user.name;
-  print('Username: $username');
-  String jsonOutput = jsonEncode(user.toJson());
-  print('Converted JSON: $jsonOutput');
-}
-*/

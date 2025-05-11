@@ -1,5 +1,86 @@
-class DoctorsData {
+class MyAppointments {
+  final String message;
+  final List<AppointmentData> data;
+  final bool status;
+  final int code;
 
+  MyAppointments({
+    required this.message,
+    required this.data,
+    required this.status,
+    required this.code,
+  });
+
+  factory MyAppointments.fromJson(Map<String, dynamic> json) {
+    return MyAppointments(
+      message: json['message'],
+      data: (json['data'] as List)
+          .map((item) => AppointmentData.fromJson(item))
+          .toList(),
+      status: json['status'],
+      code: json['code'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'message': message,
+      'data': data.map((item) => item.toJson()).toList(),
+      'status': status,
+      'code': code,
+    };
+  }
+}
+
+class AppointmentData {
+  final int id;
+  final Doctor doctor;
+  final Patient patient;
+  final String appointmentTime;
+  final String appointmentEndTime;
+  final String status;
+  final String notes;
+  final int appointmentPrice;
+
+  AppointmentData({
+    required this.id,
+    required this.doctor,
+    required this.patient,
+    required this.appointmentTime,
+    required this.appointmentEndTime,
+    required this.status,
+    required this.notes,
+    required this.appointmentPrice,
+  });
+
+  factory AppointmentData.fromJson(Map<String, dynamic> json) {
+    return AppointmentData(
+      id: json['id'],
+      doctor: Doctor.fromJson(json['doctor']),
+      patient: Patient.fromJson(json['patient']),
+      appointmentTime: json['appointment_time'],
+      appointmentEndTime: json['appointment_end_time'],
+      status: json['status'],
+      notes: json['notes'],
+      appointmentPrice: json['appointment_price'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'doctor': doctor.toJson(),
+      'patient': patient.toJson(),
+      'appointment_time': appointmentTime,
+      'appointment_end_time': appointmentEndTime,
+      'status': status,
+      'notes': notes,
+      'appointment_price': appointmentPrice,
+    };
+  }
+}
+
+class Doctor {
   final int id;
   final String name;
   final String email;
@@ -11,12 +92,11 @@ class DoctorsData {
   final String degree;
   final Specialization specialization;
   final City city;
-  final double appointPrice;
+  final int appointPrice;
   final String startTime;
   final String endTime;
 
-  DoctorsData({
-
+  Doctor({
     required this.id,
     required this.name,
     required this.email,
@@ -33,8 +113,8 @@ class DoctorsData {
     required this.endTime,
   });
 
-  factory DoctorsData.fromJson(Map<String, dynamic> json) {
-    return DoctorsData(
+  factory Doctor.fromJson(Map<String, dynamic> json) {
+    return Doctor(
       id: json['id'],
       name: json['name'],
       email: json['email'],
@@ -46,7 +126,7 @@ class DoctorsData {
       degree: json['degree'],
       specialization: Specialization.fromJson(json['specialization']),
       city: City.fromJson(json['city']),
-      appointPrice: (json['appoint_price'] as num).toDouble(),
+      appointPrice: json['appoint_price'],
       startTime: json['start_time'],
       endTime: json['end_time'],
     );
@@ -144,6 +224,42 @@ class Governrate {
     return {
       'id': id,
       'name': name,
+    };
+  }
+}
+
+class Patient {
+  final int id;
+  final String name;
+  final String email;
+  final String phone;
+  final String gender;
+
+  Patient({
+    required this.id,
+    required this.name,
+    required this.email,
+    required this.phone,
+    required this.gender,
+  });
+
+  factory Patient.fromJson(Map<String, dynamic> json) {
+    return Patient(
+      id: json['id'],
+      name: json['name'],
+      email: json['email'],
+      phone: json['phone'],
+      gender: json['gender'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'email': email,
+      'phone': phone,
+      'gender': gender,
     };
   }
 }
